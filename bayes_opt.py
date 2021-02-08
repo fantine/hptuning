@@ -117,7 +117,7 @@ def get_domain(hptuning_config):
   domain = []
   for hparam in hparams['hyperparameters']:
     values = get_scaled_values(
-        hparam['min_value'], hparam['max_value'], hparam['scale'])
+        float(hparam['min_value']), float(hparam['max_value']), hparam['scale'])
     domain.append({'name': hparam['name'], 'domain': values,
                    'type': 'discrete', 'scale': hparam['scale']})
   return domain, hparams['max_trials']
