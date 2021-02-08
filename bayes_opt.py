@@ -159,6 +159,10 @@ def _parse_arguments(argv):
       help='Dataset identifier.',
       required=True)
   parser.add_argument(
+      '--label',
+      help='Label.',
+      required=True)
+  parser.add_argument(
       '--log_level',
       help='Set log level.',
       default='INFO')
