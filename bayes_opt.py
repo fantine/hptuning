@@ -79,7 +79,7 @@ class MLBlackBox():
 
 def rescale_value(value, scale):
   if scale == 'LINEAR_SCALE':
-    return value
+    return int(value)
   if scale == 'DECIMAL_SCALE':
     return value / 10
   if scale == 'LOG2_SCALE':
