@@ -83,9 +83,9 @@ def rescale_value(value, scale):
   if scale == 'DECIMAL_SCALE':
     return value / 10
   if scale == 'LOG2_SCALE':
-    return 2**value
+    return int(2**value)
   if scale == 'LOG10_SCALE':
-    return 10**value
+    return int(10**value)
   raise ValueError(
       'Unsupported scale. Expected LINEAR_SCALE, DECIMAL_SCALE, LOG2_SCALE,'
       ' or LOG10_SCALE. Got {} instead.'.format(scale))
