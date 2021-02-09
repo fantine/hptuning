@@ -40,8 +40,6 @@ class MLBlackBox():
       best_loss, best_epoch = min(losses)
       logging.info('Best evaluation loss found at Epoch %s: %s',
                    best_epoch, best_loss)
-      logging.info(
-          '----------------------------------------------------------')
     else:
       best_loss = DEFAULT_LOSS_VALUE
     return best_loss
@@ -60,9 +58,12 @@ class MLBlackBox():
   def _create_model_config(self, hparams):
     lines = open('config/{}.sh'.format(self.model_config), 'r').readlines()
     last_line = lines.pop()
+    logs = []
     for i, scaled_value in enumerate(hparams):
       value = rescale_value(scaled_value, self.domain[i]['scale'])
       lines.append('  --{}={} \\\n'.format(self.domain[i]['name'], value))
+      logs.append('{} {}'.format(self.domain[i]['name'], value))
+    logging.info('Hyperparameters: {}'.format(', '.join(logs)))
     lines.append(last_line)
     now = '{:%Y%m%d_%H%M%S}'.format(datetime.datetime.now())
     model_config = '{}_{}_{:03d}'.format(now, self.model_config, self.count)
@@ -71,6 +72,7 @@ class MLBlackBox():
     return model_config
 
   def f(self, hparams):
+    logging.info('----------------------------------------------------------')
     model_config = self._create_model_config(hparams[0])
     self.count += 1
     log = self.run_model(model_config)
