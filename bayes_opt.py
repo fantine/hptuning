@@ -101,7 +101,11 @@ def get_scaled_values(min_value, max_value, scale):
   if scale == 'LOG2_SCALE':
     return list(range(int(math.log2(min_value)), int(math.log2(max_value) + 1)))
   if scale == 'LOG10_SCALE':
-    return list(range(int(math.log(min_value)), int(math.log(max_value) + 1)))
+    min_exp = int(math.log10(min_value))
+    max_exp = int(math.log10(max_value))
+    if min_exp < max_exp:
+      return list(range(min_exp, max_exp + 1))
+    return list(range(min_exp, max_exp - 1, -1)
   raise ValueError(
       'Unsupported scale. Expected LINEAR_SCALE, DECIMAL_SCALE, LOG2_SCALE,'
       ' or LOG10_SCALE. Got {} instead.'.format(scale))
@@ -109,16 +113,16 @@ def get_scaled_values(min_value, max_value, scale):
 
 def get_hparams(hptuning_config):
   with open(hptuning_config) as f:
-    hparams = f.read()
+    hparams=f.read()
   return yaml.load(hparams)
 
 
 def get_domain(hptuning_config):
-  hparams = get_hparams(hptuning_config)
+  hparams=get_hparams(hptuning_config)
 
-  domain = []
+  domain=[]
   for hparam in hparams['hyperparameters']:
-    values = get_scaled_values(
+    values=get_scaled_values(
         float(hparam['min_value']), float(hparam['max_value']), hparam['scale'])
     domain.append({'name': hparam['name'], 'domain': values,
                    'type': 'discrete', 'scale': hparam['scale']})
@@ -126,11 +130,11 @@ def get_domain(hptuning_config):
 
 
 def run_experiment(model_config, hptuning_config, dataset, label):
-  domain, max_trials = get_domain(hptuning_config)
-  black_box = MLBlackBox(model_config, domain, dataset)
-  optimizer = BayesianOptimization(
+  domain, max_trials=get_domain(hptuning_config)
+  black_box=MLBlackBox(model_config, domain, dataset)
+  optimizer=BayesianOptimization(
       f=black_box.f, domain=domain, normalize_Y=False)
-  report_file = 'log/hptuning_report_{}.log'.format(label)
+  report_file='log/hptuning_report_{}.log'.format(label)
   logging.info('Logging to %s', report_file)
   optimizer.run_optimization(
       verbosity=True,
@@ -147,7 +151,7 @@ def _set_logging(log_level):
 
 def _parse_arguments(argv):
   """Parse command-line arguments."""
-  parser = argparse.ArgumentParser()
+  parser=argparse.ArgumentParser()
   parser.add_argument(
       '--model_config',
       help='ML model configuration.',
@@ -172,7 +176,7 @@ def _parse_arguments(argv):
 
 
 def main():
-  args = _parse_arguments(sys.argv[1:])
+  args=_parse_arguments(sys.argv[1:])
   _set_logging(args.log_level.upper())
   run_experiment(args.model_config, args.hptuning_config,
                  args.dataset, args.label)
