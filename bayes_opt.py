@@ -134,7 +134,7 @@ def run_experiment(model_config, hptuning_config, dataset, label):
   logging.info('Logging to %s', report_file)
   optimizer.run_optimization(
       verbosity=True,
-      max_iter=max_iterations,
+      max_iter=max_trials,
       report_file=report_file,
       evaluations_file='log/hptuning_evaluations_{}.log'.format(label),
       models_file='log/hptuning_model_{}.log'.format(label),
