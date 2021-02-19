@@ -48,8 +48,7 @@ class MLBlackBox():
     cmd = 'bin/train.sh {} {} {}'.format(model_config,
                                          self.dataset, 'hptuning')
     logging.info(cmd)
-    output = subprocess.run(cmd, stdout=subprocess.PIPE,
-                            shell=True, check=False)
+    output = subprocess.run(cmd, capture_output=True, shell=True, check=False)
     output = output.stdout.decode('utf-8')
     output = output.splitlines()[-1]
     logging.info(output)
