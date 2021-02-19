@@ -135,14 +135,14 @@ def run_experiment(model_config, hptuning_config, dataset, label):
   optimizer = BayesianOptimization(
       f=black_box.f, domain=domain, normalize_Y=False)
   report_file = 'log/hptuning_report_{}.log'.format(label)
-  logging.info('Logging to %s', report_file)
   optimizer.run_optimization(
-      verbosity=True,
+      verbosity=False,
       max_iter=max_trials,
       report_file=report_file,
       evaluations_file='log/hptuning_evaluations_{}.log'.format(label),
       models_file='log/hptuning_model_{}.log'.format(label),
   )
+  logging.info('Writing hyperparameter tuning report to %s', report_file)
 
 
 def _set_logging(log_level):
