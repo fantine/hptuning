@@ -1,4 +1,5 @@
 import argparse
+from collections import defaultdict
 import datetime
 import logging
 import math
@@ -19,6 +20,7 @@ class MLBlackBox():
     self.domain = domain
     self.dataset = dataset
     self.count = 0
+    self.logs = defaultdict(tuple)
 
   @staticmethod
   def get_loss(logfile):
@@ -35,13 +37,14 @@ class MLBlackBox():
         loss_match = re.search(loss_pattern, line)
         if loss_match:
           loss = float(loss_match.group(1))
-          losses.append((loss, epoch))
+          losses.append((loss, epoch, line))
     if len(losses) > 0:
-      best_loss, best_epoch = min(losses)
+      best_loss, best_epoch, stats = min(losses)
       logging.info('Best evaluation loss found at Epoch %s: %s',
                    best_epoch, best_loss)
     else:
-      best_loss = DEFAULT_LOSS_VALUE
+      best_loss, best_epoch, stats = DEFAULT_LOSS_VALUE, 'none', 'none'
+    self.logs[best_loss] = (best_epoch, stats, logfile)
     return best_loss
 
   def run_model(self, model_config):
@@ -145,6 +148,11 @@ def run_experiment(model_config, hptuning_config, dataset, label):
       models_file='log/hptuning_model_{}.log'.format(label),
   )
   logging.info('Writing hyperparameter tuning report to %s', report_file)
+  best_loss = min(optimizer.Y)[0][0]
+  epoch, metrics, logfile = black_box.logs[best_loss]
+  logging.info('Best evaluation loss found at Epoch %s: %s', epoch, best_loss)
+  logging.info('Metrics: %s', metrics)
+  logging.info('Log file: %s', logfile)
 
 
 def _set_logging(log_level):
