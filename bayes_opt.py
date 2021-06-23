@@ -22,8 +22,7 @@ class MLBlackBox():
     self.count = 0
     self.logs = defaultdict(tuple)
 
-  @staticmethod
-  def get_loss(logfile):
+  def get_loss(self, logfile):
     losses = []
     epoch = -1
     epoch_pattern = r'Epoch (\d+)'
