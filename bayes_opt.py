@@ -146,10 +146,11 @@ def run_experiment(model_config, hptuning_config, dataset, label):
       evaluations_file='log/hptuning_evaluations_{}.log'.format(label),
       models_file='log/hptuning_model_{}.log'.format(label),
   )
+  logging.info('----------------------------------------------------------')
   logging.info('Writing hyperparameter tuning report to %s', report_file)
-  best_loss = min(optimizer.Y)[0][0]
+  best_loss = min(optimizer.Y)[0]
   epoch, metrics, logfile = black_box.logs[best_loss]
-  logging.info('Best evaluation loss found at Epoch %s: %s', epoch, best_loss)
+  logging.info('Best overall evaluation loss: %s', best_loss)
   logging.info('Metrics: %s', metrics)
   logging.info('Log file: %s', logfile)
 
